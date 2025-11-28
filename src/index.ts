@@ -1,4 +1,4 @@
-import VueDraggableResizable from './components/Vue3DraggableResizable'
+import Vue3DraggableResizable from './components/Vue3DraggableResizable'
 import DraggableContainer from './components/DraggableContainer'
 import {
   convertToPixel,
@@ -11,14 +11,14 @@ import type { App, Plugin } from 'vue'
 
 const VueDraggableResizablePlugin: Plugin = {
   install(app: App) {
-    app.component('Vue3DraggableResizable', VueDraggableResizable)
+    app.component('Vue3DraggableResizable', Vue3DraggableResizable)
     app.component('DraggableContainer', DraggableContainer)
   }
 }
 
 // Components
 export { DraggableContainer }
-export { VueDraggableResizable }
+export { Vue3DraggableResizable }
 
 // Unit conversion utilities
 export {

@@ -200,8 +200,9 @@ export default defineComponent({
 
       // Horizontal grid line numbers (X-axis)
       if (this.showGridNumbersX) {
-        const maxGridX = Math.ceil(this.containerSize.width / this.gridSpacing)
-        for (let i = 0; i <= maxGridX; i++) {
+        const maxGridX = Math.floor(this.containerSize.width / this.gridSpacing)
+        // Exclude last value to prevent scrolling
+        for (let i = 0; i < maxGridX; i++) {
           const pos = i * this.gridSpacing
 
           // When both X and Y are enabled, show 0 only on Y-axis (prevent duplicate)
@@ -226,8 +227,9 @@ export default defineComponent({
 
       // Vertical grid line numbers (Y-axis)
       if (this.showGridNumbersY) {
-        const maxGridY = Math.ceil(this.containerSize.height / this.gridSpacing)
-        for (let i = 0; i <= maxGridY; i++) {
+        const maxGridY = Math.floor(this.containerSize.height / this.gridSpacing)
+        // Exclude last value to prevent scrolling
+        for (let i = 0; i < maxGridY; i++) {
           const pos = i * this.gridSpacing
           numbers.push(
             h('div', {
