@@ -6,15 +6,15 @@
 .vdr-container.active {
   border-color: #000;
   border-style: dashed;
-  z-index: 9999 !important; /* 활성 상태일 때 최상위로 */
+  z-index: 9999 !important; /* Bring to top when active */
 }
 .vdr-container.dragging {
   border-color: #000;
   border-style: solid;
-  z-index: 9999 !important; /* 드래그 중일 때도 최상위로 */
+  z-index: 9999 !important; /* Bring to top when dragging */
 }
 .vdr-container.resizing {
-  z-index: 9999 !important; /* 리사이즈 중일 때도 최상위로 */
+  z-index: 9999 !important; /* Bring to top when resizing */
 }
 .vdr-handle {
   box-sizing: border-box;

@@ -56,7 +56,7 @@ export function getId() {
   return String(Math.random()).substr(2) + String(Date.now())
 }
 
-// 단위 변환 함수들
+// Unit conversion functions
 /**
  * Converts a value to pixels based on the unit type
  * @param value - The numeric value to convert
@@ -101,12 +101,12 @@ export function convertFromPixel(value: number, unit: string, parentSize: number
       return 0
     }
     const percentValue = (value / parentSize) * 100
-    return Number(percentValue.toFixed(2))  // 소수점 2자리로 제한
+    return Number(percentValue.toFixed(2))  // Limit to 2 decimal places
   }
   return value
 }
 
-// 단위 변환 검증 함수들
+// Unit conversion validation functions
 /**
  * Validates if a percentage value is within valid range (0-100)
  * @param value - The percentage value to validate
@@ -130,7 +130,7 @@ export function validatePixel(value: number, parentSize: number): boolean {
   return value >= 0 && value <= parentSize
 }
 
-// 랜덤 색상 생성
+// Random color generation
 /**
  * Generates a random hex color string
  * @returns A random color in hex format (e.g., '#3A7FE1')

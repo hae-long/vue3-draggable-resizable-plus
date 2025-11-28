@@ -218,32 +218,32 @@ const VueDraggableResizable = defineComponent({
       emit
     )
     watchProps(props, limitProps, parentSize, containerProps)
-    
-    // z-index 관리
+
+    // z-index management
     const originalZIndex = ref<string>('')
     const setZIndex = (zIndex: string) => {
       if (containerRef.value) {
         containerRef.value.style.zIndex = zIndex;
       }
     }
-    
+
     const activateZIndex = () => {
       if (containerRef.value) {
-        // 원래 z-index 저장
+        // Store original z-index
         originalZIndex.value = containerRef.value.style.zIndex || 'auto'
-        // 활성 상태일 때 z-index를 9999로 설정
+        // Set z-index to 9999 when active
         setZIndex('9999')
       }
     }
-    
+
     const deactivateZIndex = () => {
       if (containerRef.value) {
-        // 비활성 상태일 때 원래 z-index로 복원
+        // Restore original z-index when deactivated
         setZIndex(originalZIndex.value)
       }
     }
-    
-    // 활성 상태 변경 감지
+
+    // Watch for active state changes
     watch(() => containerProps.enable.value, (isActive) => {
       if (isActive) {
         activateZIndex()
@@ -271,7 +271,7 @@ const VueDraggableResizable = defineComponent({
       let top = this.typeY === '%' ? convertFromPixel(this.top, '%', this.parentHeight) : this.top
       let left = this.typeX === '%' ? convertFromPixel(this.left, '%', this.parentWidth) : this.left
       
-      // % 단위인 경우 소수점 2자리로 제한
+      // Limit to 2 decimal places for % units
       if (this.typeW === '%') width = Number(width.toFixed(2))
       if (this.typeH === '%') height = Number(height.toFixed(2))
       if (this.typeY === '%') top = Number(top.toFixed(2))
@@ -298,24 +298,24 @@ const VueDraggableResizable = defineComponent({
     if (!this.containerRef) return
     this.containerRef.ondragstart = () => false
     const { width, height } = getElSize(this.containerRef)
-    
-    // 초기 너비 설정
+
+    // Set initial width
     const initWidth = this.initW !== null ? this.initW : (this.w || width)
     const pixelWidth = convertToPixel(initWidth, this.typeW, this.parentWidth)
     this.setWidth(pixelWidth)
-    
-    // 초기 높이 설정
+
+    // Set initial height
     const initHeight = this.initH !== null ? this.initH : (this.h || height)
     const pixelHeight = convertToPixel(initHeight, this.typeH, this.parentHeight)
     this.setHeight(pixelHeight)
-    
-    // 초기 위치 설정
+
+    // Set initial position
     const pixelLeft = convertToPixel(this.x, this.typeX, this.parentWidth)
     const pixelTop = convertToPixel(this.y, this.typeY, this.parentHeight)
     this.setLeft(pixelLeft)
     this.setTop(pixelTop)
-    
-    // 초기 z-index 설정
+
+    // Set initial z-index
     if (this.enable) {
       this.activateZIndex()
     }

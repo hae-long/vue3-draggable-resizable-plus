@@ -109,14 +109,14 @@ export default defineComponent({
       }
     })
 
-    // 컨테이너 크기 측정을 위한 ref와 reactive state
+    // Ref and reactive state for measuring container size
     const containerRef = ref<HTMLElement>()
     const containerSize = reactive({
       width: 0,
       height: 0
     })
 
-    // 컨테이너 크기 측정 함수
+    // Function to measure container size
     const updateContainerSize = () => {
       if (containerRef.value) {
         const rect = containerRef.value.getBoundingClientRect()
@@ -125,13 +125,13 @@ export default defineComponent({
       }
     }
 
-    // 브라우저 resize 이벤트 핸들러
+    // Browser resize event handler
     let resizeObserver: any = null
 
     onMounted(() => {
       updateContainerSize()
 
-      // ResizeObserver로 컨테이너 크기 변경 감지
+      // Use ResizeObserver to detect container size changes
       if (containerRef.value && typeof window !== 'undefined' && 'ResizeObserver' in window) {
         resizeObserver = new (window as any).ResizeObserver(() => {
           updateContainerSize()
@@ -187,24 +187,24 @@ export default defineComponent({
       ]
     },
     renderGridNumbers() {
-      // 디버그용: 격자선 번호 표시
+      // Debug: display grid line numbers
       if (!this.showGrid || this.gridSpacing <= 0) {
         return []
       }
       const numbers = []
 
-      // 컨테이너 크기가 측정되지 않았으면 빈 배열 반환
+      // Return empty array if container size has not been measured
       if (!this.containerSize.width || !this.containerSize.height) {
         return []
       }
 
-      // 가로 격자선 번호 (X축)
+      // Horizontal grid line numbers (X-axis)
       if (this.showGridNumbersX) {
         const maxGridX = Math.ceil(this.containerSize.width / this.gridSpacing)
         for (let i = 0; i <= maxGridX; i++) {
           const pos = i * this.gridSpacing
 
-          // X, Y 모두 활성화 시 0번은 Y축에만 표시 (중복 방지)
+          // When both X and Y are enabled, show 0 only on Y-axis (prevent duplicate)
           if (i === 0 && this.showGridNumbersY) continue
 
           numbers.push(
@@ -224,7 +224,7 @@ export default defineComponent({
         }
       }
 
-      // 세로 격자선 번호 (Y축)
+      // Vertical grid line numbers (Y-axis)
       if (this.showGridNumbersY) {
         const maxGridY = Math.ceil(this.containerSize.height / this.gridSpacing)
         for (let i = 0; i <= maxGridY; i++) {

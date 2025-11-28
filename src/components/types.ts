@@ -7,16 +7,16 @@ export interface Position {
   h: number
 }
 
-// 단위 타입 추가
+// Unit type
 export type Unit = 'px' | '%'
 
-// 단위를 포함한 값 타입
+// Value type with unit
 export interface ValueWithUnit {
   value: number
   unit: Unit
 }
 
-// 단위를 포함한 Position 타입
+// Position type with unit
 export interface PositionWithUnit {
   x: ValueWithUnit
   y: ValueWithUnit
