@@ -570,31 +570,48 @@ export function initResizeHandle(
     // Grid snap 적용: resize 후 위치와 크기를 격자선에 맞춤
     if (props.snapToGrid && props.gridSpacing > 0) {
       const grid = props.gridSpacing
+      const minW = props.minW
+      const minH = props.minH
 
       // 왼쪽/위쪽 edge를 움직이는 handle (tl, tm, ml)
+      // 반대쪽 edge를 고정 앵커로 사용하여 minW/minH 체크
       if (idx1 === 'l') {
+        const fixedRightEdge = lstX + lstW
         const snappedLeft = Math.round(left.value / grid) * grid
-        const deltaLeft = snappedLeft - left.value
-        setLeft(snappedLeft)
-        setWidth(width.value - deltaLeft)
+        const newWidth = fixedRightEdge - snappedLeft
+        // minW 이상일 때만 snap 적용
+        if (newWidth >= minW) {
+          left.value = snappedLeft
+          width.value = newWidth
+        }
       }
       if (idx0 === 't') {
+        const fixedBottomEdge = lstY + lstH
         const snappedTop = Math.round(top.value / grid) * grid
-        const deltaTop = snappedTop - top.value
-        setTop(snappedTop)
-        setHeight(height.value - deltaTop)
+        const newHeight = fixedBottomEdge - snappedTop
+        // minH 이상일 때만 snap 적용
+        if (newHeight >= minH) {
+          top.value = snappedTop
+          height.value = newHeight
+        }
       }
 
       // 오른쪽/아래쪽 edge를 움직이는 handle (br, bm, mr)
       if (idx1 === 'r') {
         const rightEdge = left.value + width.value
         const snappedRight = Math.round(rightEdge / grid) * grid
-        setWidth(snappedRight - left.value)
+        const newWidth = snappedRight - left.value
+        if (newWidth >= minW) {
+          setWidth(newWidth)
+        }
       }
       if (idx0 === 'b') {
         const bottomEdge = top.value + height.value
         const snappedBottom = Math.round(bottomEdge / grid) * grid
-        setHeight(snappedBottom - top.value)
+        const newHeight = snappedBottom - top.value
+        if (newHeight >= minH) {
+          setHeight(newHeight)
+        }
       }
     }
 

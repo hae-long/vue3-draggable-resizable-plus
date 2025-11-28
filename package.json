@@ -21,8 +21,18 @@
       "import": "./dist/vue3-draggable-resizable.js",
       "require": "./dist/vue3-draggable-resizable.umd.cjs"
     },
-    "./style.css": "./dist/style.css"
+    "./style.css": {
+      "import": "./dist/vue3-draggable-resizable.css",
+      "require": "./dist/vue3-draggable-resizable.css",
+      "default": "./dist/vue3-draggable-resizable.css"
+    },
+    "./dist/style.css": "./dist/vue3-draggable-resizable.css",
+    "./dist/vue3-draggable-resizable.css": "./dist/vue3-draggable-resizable.css"
   },
+  "style": "./dist/vue3-draggable-resizable.css",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "files": [
     "dist"
   ],

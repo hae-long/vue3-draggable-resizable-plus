@@ -168,7 +168,7 @@
               :typeH="component.typeH"
               :draggable="true"
               :resizable="true"
-              :parent="true"
+              :parent="false"
               :gridSpacing="gridSpacing"
               :snapToGrid="showGrid"
               @click="selectComponent(component.id)"
@@ -186,7 +186,7 @@
               @resize-end="print('resize-end', $event)"
             >
               <div class="component-content">
-                Component #{{ component.id }}<br/>
+                <!-- Component #{{ component.id }}<br/> -->
                 <small v-if="showGridNumbersX || showGridNumbersY">
                   Grid: ({{ Math.round(convertToPixel(component.x, component.typeX, parentWidth) / gridSpacing) }},
                   {{ Math.round(convertToPixel(component.y, component.typeY, parentHeight) / gridSpacing) }})
@@ -542,11 +542,9 @@ export default defineComponent({
 
 /* Drag Node Styles */
 .drag-node {
-  border: 2px solid #666;
-  padding: 10px;
+  //border: 2px solid #666;
   box-shadow: 0 2px 4px rgba(0,0,0,0.15);
   cursor: move;
-  /* transition 제거: 드래그 시 커서와 동기화를 위해 */
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -561,7 +559,7 @@ export default defineComponent({
 }
 
 .drag-node.selected {
-  border: 3px solid #007bff;
+  //border: 3px solid #007bff;
   box-shadow: 0 0 0 1px rgba(0, 123, 255, 0.25);
   z-index: 9999;
 }
