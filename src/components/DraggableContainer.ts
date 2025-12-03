@@ -395,7 +395,7 @@ export default defineComponent({
                 top: '0px',
                 fontSize: '10px',
                 color: '#f00',
-                backgroundColor: 'rgba(255,255,255,0.7)',
+                backgroundColor: 'transparent',
                 padding: '2px',
                 zIndex: '10000'
               }
@@ -418,7 +418,7 @@ export default defineComponent({
                 top: (pos - 5) + 'px',
                 fontSize: '10px',
                 color: '#f00',
-                backgroundColor: 'rgba(255,255,255,0.7)',
+                backgroundColor: 'transparent',
                 padding: '2px',
                 zIndex: '10000'
               }
