@@ -12,7 +12,7 @@ Note: This is a maintained fork of [a7650/vue3-draggable-resizable/main-branch].
 
 </div>
 
-> [Vue3 Component] Draggable and resizable component for vue3, with support for collision detection, element snap alignment, real-time reference lines, grid snap, and unit conversion (px/%).
+> [Vue3 Component] Draggable, resizable and rotatable component for vue3, with support for collision detection, element snap alignment, real-time reference lines, grid snap, spacing indicators and unit conversion (px/%).
 
 [한국어 문서](https://github.com/hae-long/vue3-draggable-resizable/blob/main/docs/document_kr.md)
 
@@ -24,19 +24,23 @@ Note: This is a maintained fork of [a7650/vue3-draggable-resizable/main-branch].
   - [Events](#events)
   - [Use adsorption alignment](#use-adsorption-alignment)
   - [Grid System](#grid-system)
+  - [Spacing Indicators](#spacing-indicators)
+  - [Rotation](#rotation)
   - [Unit Conversion (px/%)](#unit-conversion)
   - [Utility Functions](#utility-functions)
 
 ### Features
 
 - Draggable and resizable
+- **Rotatable with snap angle support**
 - Define handles for resizing
 - Restrict movement and size in parent node
 - Customize various class names
 - Provide your own markup for handles
 - Adsorption alignment
 - Reference line
-- **Grid system with snap-to-grid**
+- **Grid system with snap-to-grid (supports rotated elements with center-point snap)**
+- **Spacing indicators between elements (Figma-like)**
 - **Unit conversion (px/%) support**
 - **Utility functions for unit conversion**
 
@@ -436,6 +440,50 @@ Enable snap-to-grid during drag and resize operations.
 <Vue3DraggableResizable :snapToGrid="true" :gridSpacing="50" />
 ```
 
+#### rotatable
+
+type: `Boolean`<br>
+default: `false`<br>
+
+Enable rotation functionality. When enabled, a rotation handle appears above the component.
+
+```html
+<Vue3DraggableResizable :rotatable="true" />
+```
+
+#### rotation
+
+type: `Number`<br>
+default: `0`<br>
+
+Current rotation angle in degrees. You can use "v-model:rotation" to keep it up-to-date.
+
+```html
+<Vue3DraggableResizable :rotatable="true" v-model:rotation="rotation" />
+```
+
+#### rotationSnap
+
+type: `Number`<br>
+default: `0`<br>
+
+Snap angle in degrees during rotation. Set to 0 to disable snap. For example, 15 will snap to 0°, 15°, 30°, etc.
+
+```html
+<Vue3DraggableResizable :rotatable="true" :rotationSnap="15" />
+```
+
+#### classNameRotateHandle
+
+type: `String`<br>
+default: `''`<br>
+
+Custom class name for the rotation handle element.
+
+```html
+<Vue3DraggableResizable :rotatable="true" classNameRotateHandle="my-rotate-handle" />
+```
+
 #### classNameDraggable
 
 type: `String`<br>
@@ -577,6 +625,30 @@ payload: `{ x: number, y: number, w: number, h: number }`
 
 ```html
 <Vue3DraggableResizable @resize-end="resizeEndHandle" />
+```
+
+#### rotate-start
+
+payload: `{ rotation: number }`
+
+```html
+<Vue3DraggableResizable :rotatable="true" @rotate-start="rotateStartHandle" />
+```
+
+#### rotating
+
+payload: `{ rotation: number }`
+
+```html
+<Vue3DraggableResizable :rotatable="true" @rotating="rotatingHandle" />
+```
+
+#### rotate-end
+
+payload: `{ rotation: number }`
+
+```html
+<Vue3DraggableResizable :rotatable="true" @rotate-end="rotateEndHandle" />
 ```
 
 ### Use-adsorption-alignment
@@ -738,6 +810,36 @@ Reference line color
 </DraggableContainer>
 ```
 
+#### showSpacing
+
+type: `Boolean`<br>
+default: `true`<br>
+
+Show spacing indicators between active element and other elements/container edges. Displays distance lines with measurements (Figma-like feature).
+
+```html
+<DraggableContainer :showSpacing="false">
+  <Vue3DraggableResizable>
+    Test
+  </Vue3DraggableResizable>
+</DraggableContainer>
+```
+
+#### spacingColor
+
+type: `String`<br>
+default: `#ff6b6b`<br>
+
+Color of the spacing indicator lines and text.
+
+```html
+<DraggableContainer spacingColor="#00ff00">
+  <Vue3DraggableResizable>
+    Test
+  </Vue3DraggableResizable>
+</DraggableContainer>
+```
+
 ### Grid System
 
 DraggableContainer supports a visual grid system with snap-to-grid functionality.
@@ -816,6 +918,74 @@ Show grid line numbers on Y-axis (vertical)
   </Vue3DraggableResizable>
 </DraggableContainer>
 ```
+
+### Spacing Indicators
+
+The spacing indicators feature shows distance measurements between the active element and other elements or container edges, similar to design tools like Figma.
+
+```vue
+<template>
+  <DraggableContainer :showSpacing="true" spacingColor="#ff6b6b">
+    <Vue3DraggableResizable>
+      Element 1
+    </Vue3DraggableResizable>
+    <Vue3DraggableResizable>
+      Element 2
+    </Vue3DraggableResizable>
+  </DraggableContainer>
+</template>
+```
+
+When an element is active (selected), the spacing indicators will display:
+- Distance to container edges (top, right, bottom, left)
+- Distance to nearby elements
+
+The indicators automatically update during drag, resize, and rotation operations. For rotated elements, spacing is calculated based on the axis-aligned bounding box.
+
+### Rotation
+
+The rotation feature allows elements to be rotated around their center point. Enable rotation with the `rotatable` prop.
+
+```vue
+<template>
+  <DraggableContainer>
+    <Vue3DraggableResizable
+      :rotatable="true"
+      v-model:rotation="rotation"
+      :rotationSnap="15"
+      @rotate-start="onRotateStart"
+      @rotating="onRotating"
+      @rotate-end="onRotateEnd"
+    >
+      Rotatable element
+    </Vue3DraggableResizable>
+  </DraggableContainer>
+</template>
+
+<script>
+import { defineComponent, ref } from 'vue'
+
+export default defineComponent({
+  setup() {
+    const rotation = ref(0)
+
+    const onRotateStart = (e) => console.log('Rotation started:', e.rotation)
+    const onRotating = (e) => console.log('Rotating:', e.rotation)
+    const onRotateEnd = (e) => console.log('Rotation ended:', e.rotation)
+
+    return { rotation, onRotateStart, onRotating, onRotateEnd }
+  }
+})
+</script>
+```
+
+#### Rotation Features
+
+- **Rotation Handle**: A circular handle appears above the element when `rotatable` is enabled
+- **Angle Snap**: Use `rotationSnap` prop to snap to specific angles (e.g., 15° intervals)
+- **Cursor Direction**: Resize handle cursors automatically adjust based on rotation angle
+- **Center-point Grid Snap**: When grid snap is enabled, rotated elements snap based on their center point
+- **Rotated Resize**: Resizing works correctly regardless of rotation angle, maintaining the anchor point
 
 ### Unit Conversion
 

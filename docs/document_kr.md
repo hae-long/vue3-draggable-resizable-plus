@@ -12,7 +12,7 @@
 
 </div>
 
-> [Vue3 컴포넌트] 드래그하여 위치와 크기를 조정할 수 있는 컴포넌트로, 충돌 감지, 요소 스냅 정렬, 실시간 참조선, 그리드 스냅, 단위 변환(px/%)을 지원합니다.
+> [Vue3 컴포넌트] 드래그, 크기 조정, 회전이 가능한 컴포넌트로, 충돌 감지, 요소 스냅 정렬, 실시간 참조선, 그리드 스냅, 간격 인디케이터, 단위 변환(px/%)을 지원합니다.
 
 ## 문서 목차
 
@@ -22,12 +22,15 @@
   - [컴포넌트 Events](#events)
   - [스냅 정렬 기능 사용하기](#스냅-정렬-기능-사용하기)
   - [그리드 시스템](#그리드-시스템)
+  - [간격 인디케이터](#간격-인디케이터)
+  - [회전](#회전)
   - [단위 변환 (px/%)](#단위-변환)
   - [유틸리티 함수](#유틸리티-함수)
 
 ### 특징
 
 - 드래그와 크기 조정 지원, 각각 개별적으로 활성화/비활성화 가능
+- **회전 기능 지원 (스냅 각도 설정 가능)**
 - 크기 조정 핸들 커스터마이징 (8개 방향 조작 가능, 각각 활성화/비활성화 가능)
 - 부모 노드 내에서 드래그와 크기 조정 제한
 - 컴포넌트 내 다양한 클래스명 커스터마이징
@@ -35,7 +38,8 @@
 - 요소 스냅 정렬
 - 실시간 참조선
 - 사용자 정의 참조선
-- **그리드 시스템 및 스냅 투 그리드 기능**
+- **그리드 시스템 및 스냅 투 그리드 기능 (회전된 요소는 중심점 기반 스냅)**
+- **간격 인디케이터 (Figma 스타일 요소간 거리 표시)**
 - **단위 변환 (px/%) 지원**
 - **단위 변환 유틸리티 함수 제공**
 - Vue3와 TypeScript 사용
@@ -436,6 +440,50 @@ default: `false`<br>
 <Vue3DraggableResizable :snapToGrid="true" :gridSpacing="50" />
 ```
 
+#### rotatable
+
+type: `Boolean`<br>
+default: `false`<br>
+
+회전 기능 활성화. 활성화하면 컴포넌트 상단에 회전 핸들이 나타납니다.
+
+```html
+<Vue3DraggableResizable :rotatable="true" />
+```
+
+#### rotation
+
+type: `Number`<br>
+default: `0`<br>
+
+현재 회전 각도 (도 단위). "v-model:rotation"으로 부모 컴포넌트와 동기화할 수 있습니다.
+
+```html
+<Vue3DraggableResizable :rotatable="true" v-model:rotation="rotation" />
+```
+
+#### rotationSnap
+
+type: `Number`<br>
+default: `0`<br>
+
+회전 시 스냅 각도 (도 단위). 0이면 스냅 비활성화. 예를 들어 15로 설정하면 0°, 15°, 30° 등으로 스냅됩니다.
+
+```html
+<Vue3DraggableResizable :rotatable="true" :rotationSnap="15" />
+```
+
+#### classNameRotateHandle
+
+type: `String`<br>
+default: `''`<br>
+
+회전 핸들 요소의 커스텀 클래스명
+
+```html
+<Vue3DraggableResizable :rotatable="true" classNameRotateHandle="my-rotate-handle" />
+```
+
 #### classNameDraggable
 
 type: `String`<br>
@@ -593,6 +641,36 @@ payload: `{ x: number, y: number, w: number, h: number }`
 
 ```html
 <Vue3DraggableResizable @resize-end="resizeEndHandle" />
+```
+
+#### rotate-start
+
+payload: `{ rotation: number }`
+
+컴포넌트가 회전을 시작할 때 발생
+
+```html
+<Vue3DraggableResizable :rotatable="true" @rotate-start="rotateStartHandle" />
+```
+
+#### rotating
+
+payload: `{ rotation: number }`
+
+컴포넌트가 회전하는 동안 지속적으로 발생
+
+```html
+<Vue3DraggableResizable :rotatable="true" @rotating="rotatingHandle" />
+```
+
+#### rotate-end
+
+payload: `{ rotation: number }`
+
+컴포넌트가 회전을 종료할 때 발생
+
+```html
+<Vue3DraggableResizable :rotatable="true" @rotate-end="rotateEndHandle" />
 ```
 
 ### 스냅 정렬 기능 사용하기
@@ -757,6 +835,36 @@ default: `#f00`<br>
 </DraggableContainer>
 ```
 
+#### showSpacing
+
+type: `Boolean`<br>
+default: `true`<br>
+
+활성 요소와 다른 요소/컨테이너 가장자리 사이의 간격 인디케이터를 표시합니다. 측정값이 포함된 거리 선을 표시합니다 (Figma와 유사한 기능).
+
+```html
+<DraggableContainer :showSpacing="false">
+  <Vue3DraggableResizable>
+    테스트
+  </Vue3DraggableResizable>
+</DraggableContainer>
+```
+
+#### spacingColor
+
+type: `String`<br>
+default: `#ff6b6b`<br>
+
+간격 인디케이터 선과 텍스트의 색상입니다.
+
+```html
+<DraggableContainer spacingColor="#00ff00">
+  <Vue3DraggableResizable>
+    테스트
+  </Vue3DraggableResizable>
+</DraggableContainer>
+```
+
 ### 그리드 시스템
 
 DraggableContainer는 스냅 투 그리드 기능이 포함된 시각적 그리드 시스템을 지원합니다.
@@ -835,6 +943,74 @@ Y축(세로) 그리드 라인 번호 표시
   </Vue3DraggableResizable>
 </DraggableContainer>
 ```
+
+### 간격 인디케이터
+
+간격 인디케이터 기능은 활성 요소와 다른 요소 또는 컨테이너 가장자리 사이의 거리 측정값을 표시합니다. Figma와 같은 디자인 도구와 유사한 기능입니다.
+
+```vue
+<template>
+  <DraggableContainer :showSpacing="true" spacingColor="#ff6b6b">
+    <Vue3DraggableResizable>
+      요소 1
+    </Vue3DraggableResizable>
+    <Vue3DraggableResizable>
+      요소 2
+    </Vue3DraggableResizable>
+  </DraggableContainer>
+</template>
+```
+
+요소가 활성화(선택)되면 간격 인디케이터가 다음을 표시합니다:
+- 컨테이너 가장자리까지의 거리 (상, 우, 하, 좌)
+- 근처 요소까지의 거리
+
+인디케이터는 드래그, 크기 조정, 회전 작업 중에 자동으로 업데이트됩니다. 회전된 요소의 경우 축 정렬 경계 상자를 기준으로 간격이 계산됩니다.
+
+### 회전
+
+회전 기능을 사용하면 요소를 중심점을 기준으로 회전할 수 있습니다. `rotatable` prop으로 회전을 활성화합니다.
+
+```vue
+<template>
+  <DraggableContainer>
+    <Vue3DraggableResizable
+      :rotatable="true"
+      v-model:rotation="rotation"
+      :rotationSnap="15"
+      @rotate-start="onRotateStart"
+      @rotating="onRotating"
+      @rotate-end="onRotateEnd"
+    >
+      회전 가능한 요소
+    </Vue3DraggableResizable>
+  </DraggableContainer>
+</template>
+
+<script>
+import { defineComponent, ref } from 'vue'
+
+export default defineComponent({
+  setup() {
+    const rotation = ref(0)
+
+    const onRotateStart = (e) => console.log('회전 시작:', e.rotation)
+    const onRotating = (e) => console.log('회전 중:', e.rotation)
+    const onRotateEnd = (e) => console.log('회전 종료:', e.rotation)
+
+    return { rotation, onRotateStart, onRotating, onRotateEnd }
+  }
+})
+</script>
+```
+
+#### 회전 기능 특징
+
+- **회전 핸들**: `rotatable`이 활성화되면 요소 상단에 원형 핸들이 나타납니다
+- **각도 스냅**: `rotationSnap` prop을 사용하여 특정 각도로 스냅 (예: 15° 간격)
+- **커서 방향**: 크기 조정 핸들 커서가 회전 각도에 따라 자동으로 조정됩니다
+- **중심점 그리드 스냅**: 그리드 스냅이 활성화되면 회전된 요소는 중심점을 기준으로 스냅됩니다
+- **회전된 상태에서 크기 조정**: 회전 각도에 관계없이 크기 조정이 올바르게 작동하며 앵커 포인트를 유지합니다
 
 ### 단위 변환
 
