@@ -236,7 +236,8 @@ const VueDraggableResizable = defineComponent({
       emit,
       containerProvider,
       parentSize,
-      props
+      props,
+      () => currentRotation.value
     )
     const resizeHandle = initResizeHandle(
       containerProps,

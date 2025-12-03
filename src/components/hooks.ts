@@ -278,7 +278,8 @@ export function initDraggableContainer(
   emit: any,
   containerProvider: ContainerProvider | null,
   parentSize: ReturnType<typeof initParent>,
-  props: any
+  props: any,
+  getRotation?: () => number
 ) {
   const { left: x, top: y, width: w, height: h, dragging, id } = containerProps
   const {
@@ -333,41 +334,49 @@ export function initDraggableContainer(
     let newTop = lstY + deltaY
 
     if (props.snapToGrid && props.gridSpacing > 0) {
-      // Grid snap: distance-based - snap to nearest grid line (Figma/Sketch style)
       const grid = props.gridSpacing
-
-      // X-axis: choose between left and right edge, whichever is closer to grid
-      const leftToGrid = Math.round(newLeft / grid) * grid
-      const rightEdge = newLeft + w.value
-      const rightToGrid = Math.round(rightEdge / grid) * grid
-
-      const leftDist = Math.abs(newLeft - leftToGrid)
-      const rightDist = Math.abs(rightEdge - rightToGrid)
+      const rotation = getRotation ? getRotation() : 0
 
       let snappedLeft: number
-      if (leftDist <= rightDist) {
-        // Left edge is closer
-        snappedLeft = leftToGrid
-      } else {
-        // Right edge is closer
-        snappedLeft = rightToGrid - w.value
-      }
-
-      // Y-axis: choose between top and bottom edge, whichever is closer to grid
-      const topToGrid = Math.round(newTop / grid) * grid
-      const bottomEdge = newTop + h.value
-      const bottomToGrid = Math.round(bottomEdge / grid) * grid
-
-      const topDist = Math.abs(newTop - topToGrid)
-      const bottomDist = Math.abs(bottomEdge - bottomToGrid)
-
       let snappedTop: number
-      if (topDist <= bottomDist) {
-        // Top edge is closer
-        snappedTop = topToGrid
+
+      if (rotation !== 0) {
+        // Rotated element: snap center point to grid
+        const centerX = newLeft + w.value / 2
+        const centerY = newTop + h.value / 2
+        const snappedCenterX = Math.round(centerX / grid) * grid
+        const snappedCenterY = Math.round(centerY / grid) * grid
+        snappedLeft = snappedCenterX - w.value / 2
+        snappedTop = snappedCenterY - h.value / 2
       } else {
-        // Bottom edge is closer
-        snappedTop = bottomToGrid - h.value
+        // Non-rotated: snap edges to grid (Figma/Sketch style)
+        // X-axis: choose between left and right edge, whichever is closer to grid
+        const leftToGrid = Math.round(newLeft / grid) * grid
+        const rightEdge = newLeft + w.value
+        const rightToGrid = Math.round(rightEdge / grid) * grid
+
+        const leftDist = Math.abs(newLeft - leftToGrid)
+        const rightDist = Math.abs(rightEdge - rightToGrid)
+
+        if (leftDist <= rightDist) {
+          snappedLeft = leftToGrid
+        } else {
+          snappedLeft = rightToGrid - w.value
+        }
+
+        // Y-axis: choose between top and bottom edge, whichever is closer to grid
+        const topToGrid = Math.round(newTop / grid) * grid
+        const bottomEdge = newTop + h.value
+        const bottomToGrid = Math.round(bottomEdge / grid) * grid
+
+        const topDist = Math.abs(newTop - topToGrid)
+        const bottomDist = Math.abs(bottomEdge - bottomToGrid)
+
+        if (topDist <= bottomDist) {
+          snappedTop = topToGrid
+        } else {
+          snappedTop = bottomToGrid - h.value
+        }
       }
 
       // Apply snapped values
@@ -674,50 +683,61 @@ export function initResizeHandle(
     setLeft(newLeft)
     setTop(newTop)
 
-    // Apply grid snap: align position and size to grid lines after resize
-    if (props.snapToGrid && props.gridSpacing > 0 && rotation === 0) {
+    // Apply grid snap for resize
+    if (props.snapToGrid && props.gridSpacing > 0) {
       const grid = props.gridSpacing
       const minW = props.minW
       const minH = props.minH
 
-      // Left/top edge handles (tl, tm, ml)
-      // Use opposite edge as fixed anchor to check minW/minH
-      if (idx1 === 'l') {
-        const fixedRightEdge = lstX + lstW
-        const snappedLeft = Math.round(left.value / grid) * grid
-        const newWidthSnapped = fixedRightEdge - snappedLeft
-        // Only apply snap if new width >= minW
-        if (newWidthSnapped >= minW) {
-          left.value = snappedLeft
-          width.value = newWidthSnapped
+      if (rotation !== 0) {
+        // Rotated element: snap center point to grid
+        const centerX = left.value + width.value / 2
+        const centerY = top.value + height.value / 2
+        const snappedCenterX = Math.round(centerX / grid) * grid
+        const snappedCenterY = Math.round(centerY / grid) * grid
+        left.value = snappedCenterX - width.value / 2
+        top.value = snappedCenterY - height.value / 2
+      } else {
+        // Non-rotated: snap edges to grid
+        // Left/top edge handles (tl, tm, ml)
+        // Use opposite edge as fixed anchor to check minW/minH
+        if (idx1 === 'l') {
+          const fixedRightEdge = lstX + lstW
+          const snappedLeft = Math.round(left.value / grid) * grid
+          const newWidthSnapped = fixedRightEdge - snappedLeft
+          // Only apply snap if new width >= minW
+          if (newWidthSnapped >= minW) {
+            left.value = snappedLeft
+            width.value = newWidthSnapped
+          }
         }
-      }
-      if (idx0 === 't') {
-        const fixedBottomEdge = lstY + lstH
-        const snappedTop = Math.round(top.value / grid) * grid
-        const newHeightSnapped = fixedBottomEdge - snappedTop
-        // Only apply snap if new height >= minH
-        if (newHeightSnapped >= minH) {
-          top.value = snappedTop
-          height.value = newHeightSnapped
+        if (idx0 === 't') {
+          const fixedBottomEdge = lstY + lstH
+          const snappedTop = Math.round(top.value / grid) * grid
+          const newHeightSnapped = fixedBottomEdge - snappedTop
+          // Only apply snap if new height >= minH
+          if (newHeightSnapped >= minH) {
+            top.value = snappedTop
+            height.value = newHeightSnapped
+          }
         }
-      }
 
-      // Right/bottom edge handles (br, bm, mr)
-      if (idx1 === 'r') {
-        const rightEdge = left.value + width.value
-        const snappedRight = Math.round(rightEdge / grid) * grid
-        const newWidthSnapped = snappedRight - left.value
-        if (newWidthSnapped >= minW) {
-          setWidth(newWidthSnapped)
+        // Right/bottom edge handles (br, bm, mr)
+        if (idx1 === 'r') {
+          const rightEdge = left.value + width.value
+          const snappedRight = Math.round(rightEdge / grid) * grid
+          const newWidthSnapped = snappedRight - left.value
+          if (newWidthSnapped >= minW) {
+            setWidth(newWidthSnapped)
+          }
         }
-      }
-      if (idx0 === 'b') {
-        const bottomEdge = top.value + height.value
-        const snappedBottom = Math.round(bottomEdge / grid) * grid
-        const newHeightSnapped = snappedBottom - top.value
-        if (newHeightSnapped >= minH) {
-          setHeight(newHeightSnapped)
+        if (idx0 === 'b') {
+          const bottomEdge = top.value + height.value
+          const snappedBottom = Math.round(bottomEdge / grid) * grid
+          const newHeightSnapped = snappedBottom - top.value
+          if (newHeightSnapped >= minH) {
+            setHeight(newHeightSnapped)
+          }
         }
       }
     }
