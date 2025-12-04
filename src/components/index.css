@@ -83,7 +83,6 @@
   margin-left: -10px;
   cursor: grab;
   z-index: 10;
-  display: flex !important;
   align-items: center;
   justify-content: center;
 }

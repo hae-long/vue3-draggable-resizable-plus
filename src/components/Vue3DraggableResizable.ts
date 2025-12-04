@@ -518,7 +518,7 @@ const VueDraggableResizable = defineComponent({
       children.push(
         h('div', {
           class: ['vdr-rotate-handle', this.classNameRotateHandle],
-          style: { display: this.enable ? 'block' : 'none' },
+          style: { display: this.enable ? 'flex' : 'none' },
           onMousedown: this.rotateHandleDown,
           onTouchstart: this.rotateHandleDown
         })
