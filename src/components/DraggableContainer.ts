@@ -62,7 +62,7 @@ export default defineComponent({
     },
     showSpacing: {
       type: Boolean,
-      default: true
+      default: false
     },
     spacingColor: {
       type: String,

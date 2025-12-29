@@ -147,6 +147,7 @@
       <div class="main-area">
         <div class="parent">
           <DraggableContainer
+            :showSpacing="false"
             :gridSpacing="gridSpacing"
             :showGrid="showGrid"
             :showGridNumbersX="showGridNumbersX"
@@ -171,7 +172,7 @@
               :parent="true"
               :gridSpacing="gridSpacing"
               :snapToGrid="showGrid"
-              :rotatable="true"
+              :rotatable="false"
               @click="selectComponent(component.id)"
               @activated="handleActivated(component.id)"
               @deactivated="handleDeactivated(component.id)"
