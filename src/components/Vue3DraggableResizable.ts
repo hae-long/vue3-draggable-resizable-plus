@@ -172,6 +172,10 @@ const VdrProps = {
   classNameRotateHandle: {
     type: String,
     default: 'rotate-handle'
+  },
+  zIndex: {
+    type: Number,
+    default: 1000
   }
 }
 
@@ -262,7 +266,7 @@ const VueDraggableResizable = defineComponent({
         // Store original z-index
         originalZIndex.value = containerRef.value.style.zIndex || 'auto'
         // Set z-index to 9999 when active
-        setZIndex('9999')
+        setZIndex(props.zIndex.toString())
       }
     }
 

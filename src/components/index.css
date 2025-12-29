@@ -6,15 +6,12 @@
 .vdr-container.active {
   border-color: #000;
   border-style: dashed;
-  z-index: 9999 !important; /* Bring to top when active */
 }
 .vdr-container.dragging {
   border-color: #000;
   border-style: solid;
-  z-index: 9999 !important; /* Bring to top when dragging */
 }
 .vdr-container.resizing {
-  z-index: 9999 !important; /* Bring to top when resizing */
 }
 .vdr-handle {
   box-sizing: border-box;
@@ -75,7 +72,7 @@
   position: absolute;
   width: 20px;
   height: 20px;
-  background: #fff;
+  background: transparent;
   /* border: 1px solid #333; */
   border-radius: 50%;
   top: -35px;
