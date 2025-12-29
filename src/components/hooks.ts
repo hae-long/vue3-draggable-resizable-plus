@@ -600,11 +600,33 @@ export function initResizeHandle(
     // This prevents the anchor point from moving when hitting min size
     const minW = props.minW as number
     const minH = props.minH as number
-    if (newWidth < minW) {
-      newWidth = minW
+
+    // When resizing from top/left edges, we need to adjust position
+    // to keep the opposite edge (bottom/right) fixed
+    if (idx1 === 'l') {
+      // Left edge resize: keep right edge fixed at lstX + lstW
+      if (newWidth < minW) {
+        newWidth = minW
+        newLeft = (lstX + lstW) - minW
+      }
+    } else {
+      // Right edge or middle resize: just apply minimum width
+      if (newWidth < minW) {
+        newWidth = minW
+      }
     }
-    if (newHeight < minH) {
-      newHeight = minH
+
+    if (idx0 === 't') {
+      // Top edge resize: keep bottom edge fixed at lstY + lstH
+      if (newHeight < minH) {
+        newHeight = minH
+        newTop = (lstY + lstH) - minH
+      }
+    } else {
+      // Bottom edge or middle resize: just apply minimum height
+      if (newHeight < minH) {
+        newHeight = minH
+      }
     }
 
     // When rotated, we need to adjust position to keep the anchor point (opposite corner) fixed
