@@ -1,6 +1,6 @@
 {
   "name": "vue3-draggable-resizable-plus",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": false,
   "description": "[Vue3 Component] Draggable, resizable and rotatable with grid snap, spacing indicators and guide lines",
   "type": "module",
